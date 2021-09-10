@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Dice from "./Dice";
 import ScoreTable from "./ScoreTable";
+import "../game.css";
 
 const NUM_DICE = 5;
 const NUM_ROLLS = 3;
@@ -8,7 +9,7 @@ const NUM_ROLLS = 3;
 function Game() {
   const [gameState, setGameState] = useState({
     dice: Array.from({ length: NUM_DICE }),
-    locked: Array(5).fill(false),
+    locked: Array(NUM_DICE).fill(false),
     rollsLeft: NUM_ROLLS,
     rolling: false,
     scores: {
@@ -70,15 +71,31 @@ function Game() {
   }
 
   return (
-    <div className="game-wrapp">
-      <div className="dice-wrapp">
-        <h1 className="title">Yahtzee!</h1>
-        <div className="dices">
-          <Dice></Dice>
-          <button>3 rolls left</button>
-        </div>
-      </div>
-      <ScoreTable></ScoreTable>
+    <div className="Game">
+      <header className="header">
+        <h1 className="title">
+          Yahtzee! <i className="fas fa-dice-six"></i>
+        </h1>
+        <section className="dice-section">
+          <Dice
+            dice={gameState.dice}
+            locked={gameState.locked}
+            handleClick={toggleLocked}
+            disabled={gameState.rollsLeft === 0}
+            rolling={gameState.rolling}
+          />
+          <div className="button-wrapper">
+            <button
+              disabled={gameState.locked.every((x) => x) || gameState.rollsLeft === 0 || gameState.rolling}
+              onClick={animateRoll}
+              className="reroll"
+            >
+              {displayRollInfo()}
+            </button>
+          </div>
+        </section>
+      </header>
+      <ScoreTable doScore={doScore} scores={gameState.scores} />
     </div>
   );
 }
