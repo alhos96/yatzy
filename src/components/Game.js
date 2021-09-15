@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Dice from "./Dice";
 import ScoreTable from "./ScoreTable";
 import "../game.css";
@@ -7,6 +7,8 @@ const NUM_DICE = 5;
 const NUM_ROLLS = 3;
 
 function Game() {
+  const [start, setStart] = useState(false);
+  const [count, setCount] = useState(13);
   const [gameState, setGameState] = useState({
     dice: Array.from({ length: NUM_DICE }),
     locked: Array(NUM_DICE).fill(false),
@@ -28,6 +30,20 @@ function Game() {
       chance: undefined,
     },
   });
+
+  useEffect(() => {
+    if (count === 0) return;
+    if (count < 13) {
+      animateRoll();
+    }
+  }, [count]);
+
+  useEffect(() => {
+    animateRoll();
+    setTimeout(() => {
+      setStart(true);
+    }, 1500);
+  }, []);
 
   function roll(event) {
     setGameState((gs) => ({
@@ -57,12 +73,14 @@ function Game() {
   }
 
   function doScore(ruleName, ruleFn) {
+    setCount((prevCount) => prevCount - 1);
     setGameState((gs) => ({
       ...gameState,
       scores: { ...gs.scores, [ruleName]: ruleFn(gameState.dice) },
       rollsLeft: NUM_ROLLS,
       locked: Array(NUM_DICE).fill(false),
     }));
+    //animateRoll();
   }
 
   function displayRollInfo() {
@@ -71,10 +89,10 @@ function Game() {
   }
 
   return (
-    <div className="Game">
+    <div className="Game" style={{ width: "100%" }}>
       <header className="header">
         <h1 className="title">
-          Yahtzee! <i className="fas fa-dice-six"></i>
+          Yatzy! <i className="fas fa-dice-six"></i>
         </h1>
         <section className="dice-section">
           <Dice
@@ -86,16 +104,16 @@ function Game() {
           />
           <div className="button-wrapper">
             <button
-              disabled={gameState.locked.every((x) => x) || gameState.rollsLeft === 0 || gameState.rolling}
+              disabled={count === 0 || gameState.locked.every((x) => x) || gameState.rollsLeft === 0 || gameState.rolling}
               onClick={animateRoll}
               className="reroll"
             >
-              {displayRollInfo()}
+              {count === 0 ? "Game is finished" : displayRollInfo()}
             </button>
           </div>
         </section>
       </header>
-      <ScoreTable doScore={doScore} scores={gameState.scores} />
+      <ScoreTable doScore={doScore} scores={gameState.scores} count={count} start={start} />
     </div>
   );
 }

@@ -6,7 +6,7 @@
 }
 
 .Dice {
-  margin: 1em;
+  margin: 5px;
   display: flex;
   justify-content: space-between;
 }
@@ -99,10 +99,9 @@
 .ScoreTable {
   display: flex;
   flex-direction: column;
-  font-size: 0.9rem;
+  font-size: 14px;
 
   background-color: white;
-  padding: 1em;
 }
 
 .ScoreTable > section > table {
