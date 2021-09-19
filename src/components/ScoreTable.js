@@ -20,8 +20,6 @@ function ScoreTable({ scores, doScore, count, start }) {
   const [highScore, setHighScore] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
 
-  console.log(count);
-
   useEffect(() => {
     getTotalScore();
   }, [count]);
@@ -34,32 +32,31 @@ function ScoreTable({ scores, doScore, count, start }) {
 
     setTotalScore(score);
   }
-  const [newGame] = useState("");
 
   useEffect(() => {
-    const newHighScore = localStorage.getItem("highScore");
-    if (newHighScore) setHighScore(newHighScore);
-  }, []);
+    if (count === 0) localStorage.setItem("totalScore", totalScore);
+  }, [count, totalScore]);
 
+  const [newGame] = useState("");
   useEffect(() => {
     const score = localStorage.getItem("totalScore");
     if (!score) localStorage.setItem("totalScore", totalScore);
   });
 
+  //ovo postavlja hajskor
+
   useEffect(() => {
-    console.log(totalScore, "ovo je totalscore");
-    console.log(highScore, "ovo je highscore");
-    console.log(count, "ovo je count");
     if (totalScore > highScore && count === 0) {
       localStorage.setItem("highScore", totalScore);
       setHighScore(totalScore);
-      console.log("reci mi kad ovo uradis");
+      console.log("ovo mijenja highscore");
     }
   }, [totalScore, highScore, count]);
 
   useEffect(() => {
-    if (count === 0) localStorage.setItem("totalScore", totalScore);
-  }, [count]);
+    const newHighScore = localStorage.getItem("highScore");
+    if (newHighScore) setHighScore(newHighScore);
+  }, []);
 
   return (
     <div className="ScoreTable">
